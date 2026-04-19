@@ -11,11 +11,16 @@ from reflectcoder.sandbox import SubprocessSandbox
 
 def test_fixtures_load():
     tasks = load_fixtures(FIXTURES_DIR)
-    assert len(tasks) >= 3
+    assert len(tasks) >= 8
     ids = {t.task_id for t in tasks}
     assert "bug_001_sum_first_n" in ids
     assert "bug_002_average_precision" in ids
     assert "bug_003_mutable_default" in ids
+    assert "bug_004_flatten_nested" in ids
+    assert "bug_005_parse_query_string" in ids
+    assert "bug_006_rpn_calculator" in ids
+    assert "bug_007_path_normalize" in ids
+    assert "bug_008_csv_parser_quoted" in ids
 
 
 def test_buggy_source_fails_tests():

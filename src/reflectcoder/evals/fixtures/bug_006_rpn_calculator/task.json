@@ -1,0 +1,9 @@
+{
+  "task_id": "bug_006_rpn_calculator",
+  "title": "rpn_eval crashes on malformed input and leaks IndexError",
+  "problem": "The function `rpn_eval(tokens)` in rpn.py should evaluate a list of Reverse Polish Notation tokens and return a single float. Requirements:\n\n- Supported binary operators: '+', '-', '*', '/'.\n- Tokens may be int-like strings ('3'), float-like strings ('3.5'), or operator strings.\n- Division is true division (returns float). `rpn_eval(['6', '4', '/'])` -> 1.5.\n- If an operator is applied when fewer than two operands are on the stack, raise `ValueError` with the message exactly equal to 'insufficient operands'.\n- If at the end of evaluation the stack contains more than one value, raise `ValueError` with the message exactly equal to 'expression leaves more than one value'.\n- If the token list is empty, raise `ValueError` with the message exactly equal to 'empty expression'.\n- An unknown token (not a number, not a supported operator) raises `ValueError` with the message exactly equal to 'unknown token: <token>' (include the offending token).\n\nUsers are seeing uncaught `IndexError`s on malformed inputs in production, and the function returns wrong results when extra operands are left on the stack. Fix the implementation so every hidden test passes. Preserve the function signature and module-level API.",
+  "source_files": ["rpn.py"],
+  "test_files": ["test_rpn.py"],
+  "tags": ["error-handling", "multi-bug", "specific-messages"],
+  "difficulty": "medium"
+}

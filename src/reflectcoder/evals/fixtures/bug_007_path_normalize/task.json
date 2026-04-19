@@ -1,0 +1,9 @@
+{
+  "task_id": "bug_007_path_normalize",
+  "title": "normalize_path is wrong on edge cases and trailing slashes",
+  "problem": "The function `normalize_path(path)` in paths.py should normalize a POSIX-style path string. Requirements:\n\n- Collapse runs of '/' to a single '/'.\n- Resolve '.' segments by dropping them.\n- Resolve '..' segments by popping the previous segment, with the caveat that '..' at the root cannot go above the root.\n- Preserve whether the path is absolute (starts with '/').\n- An empty input string returns '.'.\n- A path consisting only of '.' (e.g. '.', './', './.') returns '.'.\n- The root path '/' returns '/' (not empty, not '.').\n- Trailing slashes in the input are removed in the output EXCEPT for the root itself.\n\nThe current implementation passes the simple cases but fails on several edge cases users are hitting. Do NOT use `os.path`, `posixpath`, or `pathlib` — the normalization must be implemented directly. Fix the implementation so every hidden test passes.",
+  "source_files": ["paths.py"],
+  "test_files": ["test_paths.py"],
+  "tags": ["strings", "edge-cases", "under-specified"],
+  "difficulty": "medium"
+}

@@ -1,0 +1,9 @@
+{
+  "task_id": "bug_008_csv_parser_quoted",
+  "title": "parse_csv_line ignores quoting and breaks on embedded commas",
+  "problem": "The function `parse_csv_line(line)` in csvp.py should parse a single CSV line and return the list of fields. Quoting rules follow RFC 4180:\n\n- Fields are separated by commas.\n- A field may be enclosed in double quotes ('\"'). Inside a quoted field, commas are literal (not separators).\n- Inside a quoted field, a doubled double-quote ('\"\"') is a literal '\"' character.\n- Whitespace around a field is preserved as part of the field (fields are NOT stripped).\n- An empty line returns a single empty field: [''].\n- A trailing comma creates a trailing empty field: 'a,' -> ['a', ''].\n- A quoted empty field returns an empty string: '\"\"' -> [''].\n- Quotes only have syntactic meaning when they open a field (the first character of a field). Quotes appearing mid-field are treated as literal characters (this is a pragmatic choice; well-formed CSV will not do this).\n\nThe current implementation splits on ',' and ignores quoting entirely, so embedded commas and escaped quotes inside quoted fields are mishandled. Do NOT use the `csv` module — implement the parser directly. Fix the implementation so every hidden test passes.",
+  "source_files": ["csvp.py"],
+  "test_files": ["test_csvp.py"],
+  "tags": ["state-machine", "multi-bug", "specification-heavy"],
+  "difficulty": "hard"
+}

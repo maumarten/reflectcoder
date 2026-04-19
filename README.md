@@ -70,7 +70,7 @@ python -m reflectcoder eval --agent reflective --max-iter 3
 
 ## Status
 
-**v0.2** — reflective loop shipped. Ablation: stub 4/5, reflective 5/5 on the current fixture set (see [`docs/evals/v0.2_ablation.md`](docs/evals/v0.2_ablation.md)). Tracking remaining milestones in [`docs/roadmap.md`](docs/roadmap.md).
+**v0.3a** — fixture set expanded from 5 to 8 with harder cases (specific error-message discipline, under-specified path edge cases, stateful CSV parsing). Ablation: stub 6/8, reflective 7/8. The reflective loop's retry-after-reflection behaviour recovered `bug_007_path_normalize` cleanly on iteration 2 — the first time in this repo's history the loop has made an auditable, iteration-driven win on a published fixture. `bug_008_csv_parser_quoted` remains unsolved by both agents, leaving real room for v0.3b's failure memory to earn its value. See [`docs/evals/v0.3a_ablation.md`](docs/evals/v0.3a_ablation.md). Tracking remaining milestones in [`docs/roadmap.md`](docs/roadmap.md).
 
 ## License
 
