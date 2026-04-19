@@ -21,8 +21,15 @@ class SubprocessSandbox:
     def run_tests(self, source_files: dict[str, str], test_files: dict[str, str]) -> TestResult:
         with tempfile.TemporaryDirectory(prefix="reflectcoder_") as tmp:
             workdir = Path(tmp)
-            self._materialize(workdir, source_files)
-            self._materialize(workdir, test_files)
+            try:
+                self._materialize(workdir, source_files)
+                self._materialize(workdir, test_files)
+            except (OSError, ValueError) as e:
+                return TestResult(
+                    passed=False,
+                    stderr=f"materialize_error: {type(e).__name__}: {e}",
+                    returncode=-1,
+                )
 
             started = time.monotonic()
             try:

@@ -38,8 +38,24 @@ class TestResult(BaseModel):
     duration_s: float = 0.0
 
 
+class IterationStep(BaseModel):
+    """One loop iteration of an agent: the patch it produced, what happened,
+    and (on failure) the reflection generated for the next iteration."""
+
+    index: int
+    patch: Patch
+    test_result: TestResult
+    reflection: str | None = None
+    tokens: int = 0
+
+
 class RunResult(BaseModel):
-    """One end-to-end attempt at one task."""
+    """One end-to-end attempt at one task.
+
+    `patch` and `test_result` describe the FINAL iteration; `trace` holds the
+    full history so consumers that care about iterative behaviour can inspect
+    every step.
+    """
 
     task_id: str
     agent: str
@@ -50,6 +66,7 @@ class RunResult(BaseModel):
     wall_clock_s: float = 0.0
     patch: Patch | None = None
     test_result: TestResult | None = None
+    trace: list[IterationStep] = Field(default_factory=list)
     error: str | None = None
     started_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 

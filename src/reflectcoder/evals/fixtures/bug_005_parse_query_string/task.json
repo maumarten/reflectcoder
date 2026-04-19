@@ -1,0 +1,9 @@
+{
+  "task_id": "bug_005_parse_query_string",
+  "title": "parse_query_string mishandles real-world inputs",
+  "problem": "The function `parse_query_string(qs)` in qs.py should parse a URL query string into a dict. Requirements:\n\n- A leading '?' may optionally be present and should be stripped.\n- For duplicate keys, the LATER value wins (`a=1&a=2` -> {'a': '2'}).\n- Values may themselves contain '=' characters (`a=1=2` -> {'a': '1=2'}).\n- Empty values are allowed (`a=&b=2` -> {'a': '', 'b': '2'}).\n- An empty query string returns an empty dict.\n\nUsers are reporting crashes and wrong results on real URLs. Fix the implementation so every hidden test passes. Preserve the function signature and return type.",
+  "source_files": ["qs.py"],
+  "test_files": ["test_qs.py"],
+  "tags": ["strings", "multi-bug", "edge-cases"],
+  "difficulty": "medium"
+}

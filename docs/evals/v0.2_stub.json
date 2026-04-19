@@ -1,0 +1,232 @@
+{
+  "agent": "stub",
+  "model": "llama-3.3-70b-versatile",
+  "n_tasks": 5,
+  "n_passed": 4,
+  "pass_rate": 0.8,
+  "total_tokens": 2721,
+  "total_wall_clock_s": 6.2810000000172295,
+  "results": [
+    {
+      "task_id": "bug_001_sum_first_n",
+      "agent": "stub",
+      "model": "llama-3.3-70b-versatile",
+      "passed": true,
+      "iterations": 1,
+      "total_tokens": 518,
+      "wall_clock_s": 1.3910000000032596,
+      "patch": {
+        "files": {
+          "calculator.py": "def sum_first_n(n: int) -> int:\n    \"\"\"Return the sum of the integers 1..n inclusive.\"\"\"\n    total = 0\n    for i in range(1, n + 1):\n        total += i\n    return total"
+        },
+        "rationale": "The bug in the function sum_first_n(n) is that the range function in the for loop is exclusive of the end value n. This means that the last number in the sequence is not being added to the total. To fix this, the range function should be changed to include n."
+      },
+      "test_result": {
+        "passed": true,
+        "stdout": "....                                                                     [100%]\n4 passed in 0.03s\n",
+        "stderr": "",
+        "returncode": 0,
+        "duration_s": 0.5780000000086147
+      },
+      "trace": [
+        {
+          "index": 0,
+          "patch": {
+            "files": {
+              "calculator.py": "def sum_first_n(n: int) -> int:\n    \"\"\"Return the sum of the integers 1..n inclusive.\"\"\"\n    total = 0\n    for i in range(1, n + 1):\n        total += i\n    return total"
+            },
+            "rationale": "The bug in the function sum_first_n(n) is that the range function in the for loop is exclusive of the end value n. This means that the last number in the sequence is not being added to the total. To fix this, the range function should be changed to include n."
+          },
+          "test_result": {
+            "passed": true,
+            "stdout": "....                                                                     [100%]\n4 passed in 0.03s\n",
+            "stderr": "",
+            "returncode": 0,
+            "duration_s": 0.5780000000086147
+          },
+          "reflection": null,
+          "tokens": 518
+        }
+      ],
+      "error": null,
+      "started_at": "2026-04-19T20:20:59.824413Z"
+    },
+    {
+      "task_id": "bug_002_average_precision",
+      "agent": "stub",
+      "model": "llama-3.3-70b-versatile",
+      "passed": true,
+      "iterations": 1,
+      "total_tokens": 495,
+      "wall_clock_s": 1.062000000005355,
+      "patch": {
+        "files": {
+          "stats.py": "def average(numbers: list[int]) -> float:\n    \"\"\"Return the arithmetic mean of `numbers` as a float.\"\"\"\n    if not numbers:\n        return 0.0\n    return sum(numbers) / len(numbers)"
+        },
+        "rationale": "The bug is caused by using integer division (//) instead of floating point division. This results in the decimal part being truncated, leading to incorrect results. The fix is to use floating point division (/) instead."
+      },
+      "test_result": {
+        "passed": true,
+        "stdout": ".....                                                                    [100%]\n5 passed in 0.03s\n",
+        "stderr": "",
+        "returncode": 0,
+        "duration_s": 0.5310000000172295
+      },
+      "trace": [
+        {
+          "index": 0,
+          "patch": {
+            "files": {
+              "stats.py": "def average(numbers: list[int]) -> float:\n    \"\"\"Return the arithmetic mean of `numbers` as a float.\"\"\"\n    if not numbers:\n        return 0.0\n    return sum(numbers) / len(numbers)"
+            },
+            "rationale": "The bug is caused by using integer division (//) instead of floating point division. This results in the decimal part being truncated, leading to incorrect results. The fix is to use floating point division (/) instead."
+          },
+          "test_result": {
+            "passed": true,
+            "stdout": ".....                                                                    [100%]\n5 passed in 0.03s\n",
+            "stderr": "",
+            "returncode": 0,
+            "duration_s": 0.5310000000172295
+          },
+          "reflection": null,
+          "tokens": 495
+        }
+      ],
+      "error": null,
+      "started_at": "2026-04-19T20:21:00.897582Z"
+    },
+    {
+      "task_id": "bug_003_mutable_default",
+      "agent": "stub",
+      "model": "llama-3.3-70b-versatile",
+      "passed": true,
+      "iterations": 1,
+      "total_tokens": 507,
+      "wall_clock_s": 1.125,
+      "patch": {
+        "files": {
+          "accumulator.py": "def append_item(item, bucket=None):\n    \"\"\"Append `item` to `bucket` and return the bucket.\"\"\"\n    if bucket is None:\n        return [item]\n    else:\n        bucket.append(item)\n        return bucket"
+        },
+        "rationale": "The issue arises from the mutable default argument in Python. When a default argument is mutable and is not provided, Python reuses the same object. To fix this, we should use None as the default argument and create a new list inside the function when no bucket is provided."
+      },
+      "test_result": {
+        "passed": true,
+        "stdout": "...                                                                      [100%]\n3 passed in 0.02s\n",
+        "stderr": "",
+        "returncode": 0,
+        "duration_s": 0.5
+      },
+      "trace": [
+        {
+          "index": 0,
+          "patch": {
+            "files": {
+              "accumulator.py": "def append_item(item, bucket=None):\n    \"\"\"Append `item` to `bucket` and return the bucket.\"\"\"\n    if bucket is None:\n        return [item]\n    else:\n        bucket.append(item)\n        return bucket"
+            },
+            "rationale": "The issue arises from the mutable default argument in Python. When a default argument is mutable and is not provided, Python reuses the same object. To fix this, we should use None as the default argument and create a new list inside the function when no bucket is provided."
+          },
+          "test_result": {
+            "passed": true,
+            "stdout": "...                                                                      [100%]\n3 passed in 0.02s\n",
+            "stderr": "",
+            "returncode": 0,
+            "duration_s": 0.5
+          },
+          "reflection": null,
+          "tokens": 507
+        }
+      ],
+      "error": null,
+      "started_at": "2026-04-19T20:21:02.014627Z"
+    },
+    {
+      "task_id": "bug_004_flatten_nested",
+      "agent": "stub",
+      "model": "llama-3.3-70b-versatile",
+      "passed": true,
+      "iterations": 1,
+      "total_tokens": 559,
+      "wall_clock_s": 1.2969999999913853,
+      "patch": {
+        "files": {
+          "nested.py": "def flatten(items: list) -> list:\n    \"\"\"Flatten a nested list of integers into a single flat list.\"\"\"\n    result: list = []\n    for item in items:\n        if isinstance(item, list):\n            result.extend(flatten(item))\n        else:\n            result.append(item)\n    return result\n"
+        },
+        "rationale": "The bug in the function is that it only checks if an item is a list and then extends the result with that list. However, if the list contains nested lists, this approach will not work. To fix this, we need to recursively call the function on any item that is a list."
+      },
+      "test_result": {
+        "passed": true,
+        "stdout": "......                                                                   [100%]\n6 passed in 0.03s\n",
+        "stderr": "",
+        "returncode": 0,
+        "duration_s": 0.5
+      },
+      "trace": [
+        {
+          "index": 0,
+          "patch": {
+            "files": {
+              "nested.py": "def flatten(items: list) -> list:\n    \"\"\"Flatten a nested list of integers into a single flat list.\"\"\"\n    result: list = []\n    for item in items:\n        if isinstance(item, list):\n            result.extend(flatten(item))\n        else:\n            result.append(item)\n    return result\n"
+            },
+            "rationale": "The bug in the function is that it only checks if an item is a list and then extends the result with that list. However, if the list contains nested lists, this approach will not work. To fix this, we need to recursively call the function on any item that is a list."
+          },
+          "test_result": {
+            "passed": true,
+            "stdout": "......                                                                   [100%]\n6 passed in 0.03s\n",
+            "stderr": "",
+            "returncode": 0,
+            "duration_s": 0.5
+          },
+          "reflection": null,
+          "tokens": 559
+        }
+      ],
+      "error": null,
+      "started_at": "2026-04-19T20:21:03.320939Z"
+    },
+    {
+      "task_id": "bug_005_parse_query_string",
+      "agent": "stub",
+      "model": "llama-3.3-70b-versatile",
+      "passed": false,
+      "iterations": 1,
+      "total_tokens": 642,
+      "wall_clock_s": 1.4060000000172295,
+      "patch": {
+        "files": {
+          "qs.py": "import urllib.parse\n\ndef parse_query_string(qs: str) -> dict[str, str]:\n    \"\"\"Parse a URL query string into a dict (later values win on duplicate keys).\"\"\"\n    qs = qs.lstrip('?')\n    result: dict[str, str] = {}\n    for k, v in urllib.parse.parse_qsl(qs):\n        result[k] = v\n    return result"
+        },
+        "rationale": "The original implementation does not handle leading '?' and does not correctly handle duplicate keys or values with '=' characters. The updated implementation uses the urllib.parse module to correctly parse the query string."
+      },
+      "test_result": {
+        "passed": false,
+        "stdout": "...F\n================================== FAILURES ===================================\n________________________ test_empty_value_is_preserved ________________________\ntest_qs.py:17: in test_empty_value_is_preserved\n    assert parse_query_string(\"a=&b=2\") == {\"a\": \"\", \"b\": \"2\"}\nE   AssertionError: assert {'b': '2'} == {'a': '', 'b': '2'}\nE     \nE     Omitting 1 identical items, use -vv to show\nE     Right contains 1 more item:\nE     {'a': ''}\nE     Use -v to get more diff\n=========================== short test summary info ===========================\nFAILED test_qs.py::test_empty_value_is_preserved - AssertionError: assert {'b...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed in 0.10s\n",
+        "stderr": "",
+        "returncode": 1,
+        "duration_s": 0.5940000000118744
+      },
+      "trace": [
+        {
+          "index": 0,
+          "patch": {
+            "files": {
+              "qs.py": "import urllib.parse\n\ndef parse_query_string(qs: str) -> dict[str, str]:\n    \"\"\"Parse a URL query string into a dict (later values win on duplicate keys).\"\"\"\n    qs = qs.lstrip('?')\n    result: dict[str, str] = {}\n    for k, v in urllib.parse.parse_qsl(qs):\n        result[k] = v\n    return result"
+            },
+            "rationale": "The original implementation does not handle leading '?' and does not correctly handle duplicate keys or values with '=' characters. The updated implementation uses the urllib.parse module to correctly parse the query string."
+          },
+          "test_result": {
+            "passed": false,
+            "stdout": "...F\n================================== FAILURES ===================================\n________________________ test_empty_value_is_preserved ________________________\ntest_qs.py:17: in test_empty_value_is_preserved\n    assert parse_query_string(\"a=&b=2\") == {\"a\": \"\", \"b\": \"2\"}\nE   AssertionError: assert {'b': '2'} == {'a': '', 'b': '2'}\nE     \nE     Omitting 1 identical items, use -vv to show\nE     Right contains 1 more item:\nE     {'a': ''}\nE     Use -v to get more diff\n=========================== short test summary info ===========================\nFAILED test_qs.py::test_empty_value_is_preserved - AssertionError: assert {'b...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 3 passed in 0.10s\n",
+            "stderr": "",
+            "returncode": 1,
+            "duration_s": 0.5940000000118744
+          },
+          "reflection": null,
+          "tokens": 642
+        }
+      ],
+      "error": null,
+      "started_at": "2026-04-19T20:21:04.729026Z"
+    }
+  ],
+  "started_at": "2026-04-19T20:21:04.730026Z"
+}

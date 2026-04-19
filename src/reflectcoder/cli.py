@@ -28,6 +28,12 @@ def main(argv: list[str] | None = None) -> int:
         help="Only run this task_id (repeatable)",
     )
     eval_p.add_argument("--timeout", type=float, default=20.0, help="Per-task sandbox timeout")
+    eval_p.add_argument(
+        "--max-iter",
+        type=int,
+        default=3,
+        help="Max iterations for iterative agents (reflective, etc.)",
+    )
 
     args = parser.parse_args(argv)
     settings = Settings.from_env()
@@ -49,7 +55,10 @@ def _cmd_eval(args: argparse.Namespace, settings: Settings) -> int:
     llm = LLMClient(api_key=settings.groq_api_key, model=settings.model)
     sandbox = SubprocessSandbox(timeout_s=args.timeout)
     agent_cls = AGENT_REGISTRY[args.agent]
-    agent = agent_cls(llm=llm, sandbox=sandbox)
+    agent_kwargs: dict = {"llm": llm, "sandbox": sandbox}
+    if args.agent == "reflective":
+        agent_kwargs["max_iter"] = args.max_iter
+    agent = agent_cls(**agent_kwargs)
 
     report = run_eval(agent, tasks, settings.run_dir)
     return 0 if report.pass_rate == 1.0 else 1

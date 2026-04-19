@@ -7,6 +7,10 @@ committed here so the history is auditable. See
 | Version | Agent        | Fixtures | Pass | Pass rate | Tokens | Wall clock | Report |
 |---------|--------------|----------|------|-----------|--------|------------|--------|
 | v0.1    | `stub`       | 3        | 3    | 100.0%    | 1336   | 3.4s       | [v0.1_baseline.json](v0.1_baseline.json) |
+| v0.2    | `stub`       | 5        | 4    | 80.0%     | 2721   | 6.3s       | [v0.2_stub.json](v0.2_stub.json) |
+| v0.2    | `reflective` | 5        | 5    | 100.0%    | 2960   | 6.5s       | [v0.2_reflective.json](v0.2_reflective.json) |
+
+v0.2 ablation writeup: [v0.2_ablation.md](v0.2_ablation.md).
 
 ## Reading the v0.1 baseline
 

@@ -1,17 +1,16 @@
 from __future__ import annotations
 
-import json
-import re
 import time
 
 from reflectcoder.llm import LLMClient
+from reflectcoder.patch_parser import parse_patch as _parse_patch
 from reflectcoder.sandbox import SubprocessSandbox
-from reflectcoder.schemas import Patch, RunResult, Task
+from reflectcoder.schemas import IterationStep, RunResult, Task
 
 SYSTEM_PROMPT = """You are a precise Python bug-fixing assistant.
 
 You will receive a problem description and one or more source files that contain a bug.
-Return a JSON object with this exact shape — and nothing else, no prose before or after:
+Return a JSON object with this exact shape and NOTHING ELSE:
 
 {
   "rationale": "<1-3 sentence explanation of the bug and your fix>",
@@ -20,7 +19,12 @@ Return a JSON object with this exact shape — and nothing else, no prose before
   }
 }
 
-Rules:
+Strict JSON rules:
+- Every string value must be double-quoted. NEVER use Python triple-quoted strings.
+- Escape newlines as \\n, tabs as \\t, and double quotes as \\".
+- Do not output anything outside the top-level JSON object — no prose, no code fences.
+
+Content rules:
 - Output only the files that need to change. Return their FULL contents, not a diff.
 - Do not modify test files.
 - Preserve existing public function signatures unless the problem explicitly asks otherwise.
@@ -78,6 +82,13 @@ class StubAgent:
         merged_sources = {**task.source_files, **patch.files}
         test_result = self._sandbox.run_tests(merged_sources, task.test_files)
 
+        step = IterationStep(
+            index=0,
+            patch=patch,
+            test_result=test_result,
+            reflection=None,
+            tokens=completion.total_tokens,
+        )
         return RunResult(
             task_id=task.task_id,
             agent=self.name,
@@ -87,6 +98,7 @@ class StubAgent:
             wall_clock_s=time.monotonic() - started,
             patch=patch,
             test_result=test_result,
+            trace=[step],
         )
 
 
@@ -102,32 +114,3 @@ def _render_task(task: Task) -> str:
 
 Respond with the JSON patch object only.
 """
-
-
-_FENCE = re.compile(r"^```(?:json)?\s*|\s*```$", re.MULTILINE)
-_JSON_BLOCK = re.compile(r"\{.*\}", re.DOTALL)
-
-
-def _parse_patch(text: str) -> Patch | None:
-    # Strip optional markdown fences the model sometimes wraps around JSON.
-    stripped = _FENCE.sub("", text).strip()
-    # Try the whole payload first (json_mode should guarantee this works).
-    payload = _try_json(stripped)
-    if payload is None:
-        match = _JSON_BLOCK.search(stripped)
-        if match:
-            payload = _try_json(match.group(0))
-    if payload is None:
-        return None
-    files = payload.get("files")
-    if not isinstance(files, dict) or not files:
-        return None
-    return Patch(files=files, rationale=payload.get("rationale", ""))
-
-
-def _try_json(text: str) -> dict | None:
-    try:
-        data = json.loads(text)
-    except json.JSONDecodeError:
-        return None
-    return data if isinstance(data, dict) else None

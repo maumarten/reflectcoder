@@ -1,0 +1,9 @@
+{
+  "task_id": "bug_004_flatten_nested",
+  "title": "flatten only handles one level of nesting",
+  "problem": "The function `flatten(items)` in nested.py should take a list that may contain integers or nested lists of integers (nested to any depth) and return a single flat list with all integers in their original order. Currently it only flattens one level of nesting. Fix it so that arbitrarily deep nesting works. Preserve the behaviour on already-flat and empty inputs.",
+  "source_files": ["nested.py"],
+  "test_files": ["test_nested.py"],
+  "tags": ["recursion", "lists"],
+  "difficulty": "medium"
+}

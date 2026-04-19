@@ -57,6 +57,9 @@ cp .env.example .env
 
 # 3. Run baseline eval
 python -m reflectcoder eval --agent stub
+
+# 4. Run the reflective agent (plan -> patch -> test -> reflect -> retry)
+python -m reflectcoder eval --agent reflective --max-iter 3
 ```
 
 ## Design principles
@@ -67,7 +70,7 @@ python -m reflectcoder eval --agent stub
 
 ## Status
 
-v0.1 scaffold — baseline harness runnable. Not production-ready. Tracking milestones in [`docs/roadmap.md`](docs/roadmap.md).
+**v0.2** — reflective loop shipped. Ablation: stub 4/5, reflective 5/5 on the current fixture set (see [`docs/evals/v0.2_ablation.md`](docs/evals/v0.2_ablation.md)). Tracking remaining milestones in [`docs/roadmap.md`](docs/roadmap.md).
 
 ## License
 
