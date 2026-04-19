@@ -1,0 +1,9 @@
+{
+  "task_id": "bug_001_sum_first_n",
+  "title": "sum_first_n returns one short",
+  "problem": "The function `sum_first_n(n)` in calculator.py is supposed to return the sum of the integers 1..n inclusive. Users report that `sum_first_n(5)` returns 10 instead of 15. Fix the bug so that all of the (hidden) tests pass.",
+  "source_files": ["calculator.py"],
+  "test_files": ["test_calculator.py"],
+  "tags": ["off-by-one", "loops"],
+  "difficulty": "easy"
+}

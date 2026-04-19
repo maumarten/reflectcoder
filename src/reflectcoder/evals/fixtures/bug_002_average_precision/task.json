@@ -1,0 +1,9 @@
+{
+  "task_id": "bug_002_average_precision",
+  "title": "average() drops fractional part",
+  "problem": "The function `average(numbers)` in stats.py should return the arithmetic mean of a list of integers as a float. Currently `average([1, 2])` returns 1 instead of 1.5. Fix the bug so all hidden tests pass. Do not change the function signature or return type annotation.",
+  "source_files": ["stats.py"],
+  "test_files": ["test_stats.py"],
+  "tags": ["numeric", "division"],
+  "difficulty": "easy"
+}

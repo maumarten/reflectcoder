@@ -1,0 +1,9 @@
+{
+  "task_id": "bug_003_mutable_default",
+  "title": "append_item leaks state across calls",
+  "problem": "The function `append_item(item, bucket=...)` in accumulator.py should return a new list containing just `item` when no bucket is supplied. Users report that after calling it several times without a bucket, the list keeps growing between calls. Fix the bug while preserving the behaviour that, when a bucket IS passed, items are appended to it in place.",
+  "source_files": ["accumulator.py"],
+  "test_files": ["test_accumulator.py"],
+  "tags": ["mutable-default", "pitfalls"],
+  "difficulty": "easy"
+}
