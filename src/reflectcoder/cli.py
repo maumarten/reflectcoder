@@ -12,6 +12,7 @@ from reflectcoder.agents import AGENT_REGISTRY
 from reflectcoder.config import FIXTURES_DIR, Settings
 from reflectcoder.evals.harness import load_fixtures, run_eval
 from reflectcoder.llm import LLMClient
+from reflectcoder.memory import FailureMemory, default_embedder
 from reflectcoder.sandbox import SubprocessSandbox
 
 
@@ -34,6 +35,26 @@ def main(argv: list[str] | None = None) -> int:
         default=3,
         help="Max iterations for iterative agents (reflective, etc.)",
     )
+    eval_p.add_argument(
+        "--memory-path",
+        default=None,
+        help="Override path to the failure memory SQLite store (reflective-memory).",
+    )
+    eval_p.add_argument(
+        "--reset-memory",
+        action="store_true",
+        help="Wipe the failure memory store before running (reflective-memory).",
+    )
+    eval_p.add_argument(
+        "--retrieval-k",
+        type=int,
+        default=3,
+        help="Top-k prior failures to retrieve per proposer call (reflective-memory).",
+    )
+
+    mem_p = sub.add_parser("memory", help="Inspect the failure memory store")
+    mem_p.add_argument("--memory-path", default=None)
+    mem_p.add_argument("--limit", type=int, default=10)
 
     args = parser.parse_args(argv)
     settings = Settings.from_env()
@@ -41,6 +62,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.cmd == "eval":
         return _cmd_eval(args, settings)
+    if args.cmd == "memory":
+        return _cmd_memory(args, settings)
 
     parser.print_help()
     return 1
@@ -56,12 +79,59 @@ def _cmd_eval(args: argparse.Namespace, settings: Settings) -> int:
     sandbox = SubprocessSandbox(timeout_s=args.timeout)
     agent_cls = AGENT_REGISTRY[args.agent]
     agent_kwargs: dict = {"llm": llm, "sandbox": sandbox}
-    if args.agent == "reflective":
-        agent_kwargs["max_iter"] = args.max_iter
-    agent = agent_cls(**agent_kwargs)
+    memory: FailureMemory | None = None
+    try:
+        if args.agent in ("reflective", "reflective-memory"):
+            agent_kwargs["max_iter"] = args.max_iter
+        if args.agent == "reflective-memory":
+            from pathlib import Path
 
-    report = run_eval(agent, tasks, settings.run_dir)
-    return 0 if report.pass_rate == 1.0 else 1
+            memory_path = Path(args.memory_path) if args.memory_path else settings.memory_path
+            memory = FailureMemory(memory_path, embedder=default_embedder())
+            if args.reset_memory:
+                memory.clear()
+            print(
+                f"[memory] {memory.path} embedder={memory.embedder_name} "
+                f"rows_before_run={memory.count()}",
+                file=sys.stderr,
+            )
+            agent_kwargs["memory"] = memory
+            agent_kwargs["retrieval_k"] = args.retrieval_k
+        agent = agent_cls(**agent_kwargs)
+
+        report = run_eval(agent, tasks, settings.run_dir)
+
+        if memory is not None:
+            print(
+                f"[memory] rows_after_run={memory.count()}",
+                file=sys.stderr,
+            )
+        return 0 if report.pass_rate == 1.0 else 1
+    finally:
+        if memory is not None:
+            memory.close()
+
+
+def _cmd_memory(args: argparse.Namespace, settings: Settings) -> int:
+    from pathlib import Path
+
+    memory_path = Path(args.memory_path) if args.memory_path else settings.memory_path
+    if not memory_path.exists():
+        print(f"No memory store at {memory_path}", file=sys.stderr)
+        return 0
+    memory = FailureMemory(memory_path, embedder=default_embedder())
+    try:
+        print(f"store: {memory.path}")
+        print(f"rows:  {memory.count()}")
+        recent = memory.dump_recent(args.limit)
+        for row in recent:
+            snippet = row["reflection"]
+            if len(snippet) > 160:
+                snippet = snippet[:160] + "..."
+            print(f"  [{row['id']}] {row['task_id']} @ {row['created_at']}  {snippet}")
+    finally:
+        memory.close()
+    return 0
 
 
 if __name__ == "__main__":
